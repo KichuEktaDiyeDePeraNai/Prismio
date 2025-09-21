@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'pages/home_page.dart';
+import 'pages/lesson_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,6 +19,9 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const HomePage(title: '3D Model Viewer - HORNET'),
+      routes: {
+        '/lesson': (context) => const LessonPage(),
+      },
       debugShowCheckedModeBanner: false,
     );
   }

@@ -99,6 +99,13 @@ class _HomePageState extends State<HomePage> {
         title: Text(widget.title),
         actions: [
           IconButton(
+            icon: const Icon(Icons.menu_book),
+            onPressed: () {
+              Navigator.pushNamed(context, '/lesson');
+            },
+            tooltip: 'Open Hornet Lesson',
+          ),
+          IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _resetToDefault,
             tooltip: 'Reset to default model',
@@ -111,6 +118,32 @@ class _HomePageState extends State<HomePage> {
             isLoading: _isLoadingFile,
             onPickFile: _pickGlbFile,
             onResetToDefault: _resetToDefault,
+          ),
+          // Lesson Button
+          Container(
+            width: double.infinity,
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: ElevatedButton.icon(
+              onPressed: () {
+                Navigator.pushNamed(context, '/lesson');
+              },
+              icon: const Icon(Icons.school, color: Colors.white),
+              label: const Text(
+                'Open Hornet Biology Lesson',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.amber.shade600,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
           ),
           ModelInfoWidget(
             selectedFilePath: _selectedFilePath,

@@ -4,7 +4,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 
 class LessonPage extends StatefulWidget {
-  const LessonPage({Key? key}) : super(key: key);
+  const LessonPage({super.key});
 
   @override
   State<LessonPage> createState() => _LessonPageState();
@@ -13,7 +13,6 @@ class LessonPage extends StatefulWidget {
 class _LessonPageState extends State<LessonPage> {
   String _markdownContent = '';
   bool _isLoading = true;
-  bool _show3DModel = false;
 
   @override
   void initState() {
@@ -37,10 +36,6 @@ class _LessonPageState extends State<LessonPage> {
   }
 
   void _show3DModelDialog() {
-    setState(() {
-      _show3DModel = true;
-    });
-    
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -80,9 +75,6 @@ class _LessonPageState extends State<LessonPage> {
                       IconButton(
                         onPressed: () {
                           Navigator.of(context).pop();
-                          setState(() {
-                            _show3DModel = false;
-                          });
                         },
                         icon: const Icon(Icons.close, color: Colors.black),
                       ),
@@ -129,11 +121,7 @@ class _LessonPageState extends State<LessonPage> {
           ),
         );
       },
-    ).then((_) {
-      setState(() {
-        _show3DModel = false;
-      });
-    });
+    );
   }
 
   @override

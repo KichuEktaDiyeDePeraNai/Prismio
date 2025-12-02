@@ -3,6 +3,7 @@ import '../services/file_picker_service.dart';
 import '../widgets/control_buttons_widget.dart';
 import '../widgets/model_info_widget.dart';
 import '../widgets/model_viewer_widget.dart';
+import '../widgets/models_category_widget.dart';
 
 /// Home page widget that manages the 3D model viewer state
 class HomePage extends StatefulWidget {
@@ -20,6 +21,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String? _selectedFilePath;
   bool _isLoadingFile = false;
+  int _selectedTabIndex = 0;
 
   /// Handles picking a GLB file from device storage
   Future<void> _pickGlbFile() async {
@@ -114,51 +116,152 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Column(
         children: [
-          ControlButtonsWidget(
-            isLoading: _isLoadingFile,
-            onPickFile: _pickGlbFile,
-            onResetToDefault: _resetToDefault,
-          ),
-          // Lesson Button
+          // Tab Navigation
           Container(
-            width: double.infinity,
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: ElevatedButton.icon(
-              onPressed: () {
-                Navigator.pushNamed(context, '/lesson');
-              },
-              icon: const Icon(Icons.school, color: Colors.white),
-              label: const Text(
-                'Open Hornet Biology Lesson',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
+            color: Theme.of(context).colorScheme.surface,
+            child: Row(
+              children: [
+                Expanded(
+                  child: _buildTabButton(
+                    context,
+                    'Viewer',
+                    Icons.view_in_ar,
+                    0,
+                  ),
                 ),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.amber.shade600,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+                Expanded(
+                  child: _buildTabButton(
+                    context,
+                    'Models',
+                    Icons.grid_on,
+                    1,
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
-          ModelInfoWidget(
-            selectedFilePath: _selectedFilePath,
-          ),
-          const SizedBox(height: 16),
-          ModelViewerWidget(
-            selectedFilePath: _selectedFilePath,
+          // Tab Content
+          Expanded(
+            child: _selectedTabIndex == 0
+                ? _buildViewerTab()
+                : _buildModelsTab(),
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _pickGlbFile,
-        tooltip: 'Pick GLB file from device',
-        child: const Icon(Icons.add),
+      floatingActionButton: _selectedTabIndex == 0
+          ? FloatingActionButton(
+              onPressed: _pickGlbFile,
+              tooltip: 'Pick GLB file from device',
+              child: const Icon(Icons.add),
+            )
+          : null,
+    );
+  }
+
+  /// Builds a tab button for switching between views
+  Widget _buildTabButton(
+    BuildContext context,
+    String label,
+    IconData icon,
+    int tabIndex,
+  ) {
+    final isActive = _selectedTabIndex == tabIndex;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            _selectedTabIndex = tabIndex;
+          });
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: isActive
+                    ? Theme.of(context).colorScheme.primary
+                    : Colors.transparent,
+                width: 3,
+              ),
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: TextStyle(
+                  fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+                  color: isActive
+                      ? Theme.of(context).colorScheme.primary
+                      : Colors.grey,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
+    );
+  }
+
+  /// Builds the viewer tab with 3D model display
+  Widget _buildViewerTab() {
+    return Column(
+      children: [
+        ControlButtonsWidget(
+          isLoading: _isLoadingFile,
+          onPickFile: _pickGlbFile,
+          onResetToDefault: _resetToDefault,
+        ),
+        // Lesson Button
+        Container(
+          width: double.infinity,
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: ElevatedButton.icon(
+            onPressed: () {
+              Navigator.pushNamed(context, '/lesson');
+            },
+            icon: const Icon(Icons.school, color: Colors.white),
+            label: const Text(
+              'Open Hornet Biology Lesson',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.amber.shade600,
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
+        ),
+        ModelInfoWidget(
+          selectedFilePath: _selectedFilePath,
+        ),
+        const SizedBox(height: 16),
+        ModelViewerWidget(
+          selectedFilePath: _selectedFilePath,
+        ),
+      ],
+    );
+  }
+
+  /// Builds the models tab with category list
+  Widget _buildModelsTab() {
+    return ModelsCategoryWidget(
+      onModelSelected: (modelPath) {
+        setState(() {
+          _selectedFilePath = modelPath;
+          _selectedTabIndex = 0; // Switch to viewer tab
+        });
+      },
     );
   }
 }

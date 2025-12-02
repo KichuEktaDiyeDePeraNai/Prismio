@@ -35,7 +35,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   model_viewer_plus: ^1.7.2
-  file_picker: ^6.2.1
+  file_picker: ^10.3.7
   path_provider: ^2.1.4
   flutter_markdown: ^0.6.18
 
@@ -65,7 +65,7 @@ flutter:
   assets:
     - assets/models/
     - assets/images/
-    - assets/HORNET_LESSON.md
+    - assets/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
